@@ -1,0 +1,628 @@
+From a0364c1143c0e81799868a5428deb5fc5cc400ae Mon Sep 17 00:00:00 2001
+From: xiaoli <906150988@qq.com>
+Date: Mon, 18 Sep 2017 23:33:27 +0800
+Subject: [PATCH 1/2] 1.add "drivers/char/imx6_gpio.c" driver file and
+ "imx_gpio" node in dts file. 2.add "gpio_keys" node in dts file in order to
+ support keys function. 3.modify ethernet default interface as "fec2->fec1".
+ 4.add rtc "ds1339" support(modify dts node and menuconfig support ds1339).
+ 5.add nor flash 5 partition: uboot , kernel , dtb , rootfs , nvrom. 6.modify
+ uart2 and add uart3,uart4,uart5.
+
+---
+ arch/arm/boot/dts/imx6ul-14x14-evk.dts | 131 ++++++++++++--
+ arch/arm/mach-imx/mach-imx6ul.c        |   2 +-
+ drivers/char/Kconfig                   |   5 +
+ drivers/char/Makefile                  |   1 +
+ drivers/char/imx6_gpio.c               | 313 +++++++++++++++++++++++++++++++++
+ 5 files changed, 437 insertions(+), 15 deletions(-)
+ 
+
+diff --git a/arch/arm/boot/dts/imx6ul-14x14-evk.dts b/arch/arm/boot/dts/imx6ul-14x14-evk.dts
+index ddec415..94cda1b 100644
+--- a/arch/arm/boot/dts/imx6ul-14x14-evk.dts
++++ b/arch/arm/boot/dts/imx6ul-14x14-evk.dts
+@@ -84,7 +84,25 @@
+ 			states = <1300000 0x1 1400000 0x0>;
+ 		};
+ 	};
+-
++	imx6_gpio {
++		compatible = "imx6_gpio";
++		watchdog_gpio = <&gpio5 8 GPIO_ACTIVE_LOW>;
++		feeddog_interval_time = <3000>;
++		status = "okay";
++	};
++	gpio_keys {
++		compatible = "gpio-keys"; 
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpio_keys>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		autorepeat;
++		button { 
++			label = "GPIO ENTER";
++			gpios = <&gpio5 4 GPIO_ACTIVE_LOW>; 
++			linux,code = <28>;
++		};
++	};
+ 	sound {
+ 		compatible = "fsl,imx6ul-evk-wm8960",
+ 			   "fsl,imx-audio-wm8960";
+@@ -95,7 +113,7 @@
+ 		codec-master;
+ 		gpr = <&gpr>;
+ 		/*
+-                 * hp-det = <hp-det-pin hp-det-polarity>;
++         * hp-det = <hp-det-pin hp-det-polarity>;
+ 		 * hp-det-pin: JD1 JD2  or JD3
+ 		 * hp-det-polarity = 0: hp detect high for headphone
+ 		 * hp-det-polarity = 1: hp detect high for speaker
+@@ -174,6 +192,20 @@
+ 	phy-mode = "rmii";
+ 	phy-handle = <&ethphy0>;
+ 	status = "okay";
++	mdio {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ethphy0: ethernet-phy@0 {
++			compatible = "ethernet-phy-ieee802.3-c22";
++			reg = <0>;
++		};
++
++		ethphy1: ethernet-phy@1 {
++			compatible = "ethernet-phy-ieee802.3-c22";
++			reg = <1>;
++		};
++	};
+ };
+ 
+ &fec2 {
+@@ -181,8 +213,8 @@
+ 	pinctrl-0 = <&pinctrl_enet2>;
+ 	phy-mode = "rmii";
+ 	phy-handle = <&ethphy1>;
+-	status = "okay";
+-
++	status = "disabled";
++	/*
+ 	mdio {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -197,20 +229,21 @@
+ 			reg = <1>;
+ 		};
+ 	};
++	*/
+ };
+ 
+ &flexcan1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_flexcan1>;
+ 	xceiver-supply = <&reg_can_3v3>;
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &flexcan2 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_flexcan2>;
+ 	xceiver-supply = <&reg_can_3v3>;
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &gpc {
+@@ -225,7 +258,7 @@
+ 	clock-frequency = <100000>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_i2c1>;
+-	status = "okay";
++	status = "disabled";
+ 
+ 	mag3110@0e {
+ 		compatible = "fsl,mag3110";
+@@ -247,7 +280,12 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_i2c2>;
+ 	status = "okay";
+-
++	ds1339: rtc@68 { 
++		compatible = "dallas,ds1339";
++		trickle-resistor-ohms = <250>;
++		reg = <0x68>;
++	}; 
++	
+ 	codec: wm8960@1a {
+ 		compatible = "wlf,wm8960";
+ 		reg = <0x1a>;
+@@ -281,12 +319,18 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_hog_1>;
+ 	imx6ul-evk {
++		pinctrl_gpio_keys: gpio_keysgrp {
++			fsl,pins = <
++				MX6UL_PAD_SNVS_TAMPER4__GPIO5_IO04	0x17059
++			>;
++		};
+ 		pinctrl_hog_1: hoggrp-1 {
+ 			fsl,pins = <
+ 				MX6UL_PAD_UART1_RTS_B__GPIO1_IO19	0x17059 /* SD1 CD */
+ 				MX6UL_PAD_GPIO1_IO05__USDHC1_VSELECT	0x17059 /* SD1 VSELECT */
+ 				MX6UL_PAD_GPIO1_IO09__GPIO1_IO09        0x17059 /* SD1 RESET */
+ 				MX6UL_PAD_SNVS_TAMPER0__GPIO5_IO00	0x80000000
++				/* MX6UL_PAD_SNVS_TAMPER4__GPIO5_IO04	0x17059 */
+ 			>;
+ 		};
+ 
+@@ -364,8 +408,10 @@
+ 
+ 		pinctrl_i2c2: i2c2grp {
+ 			fsl,pins = <
+-				MX6UL_PAD_UART5_TX_DATA__I2C2_SCL 0x4001b8b0
+-				MX6UL_PAD_UART5_RX_DATA__I2C2_SDA 0x4001b8b0
++				/* MX6UL_PAD_UART5_TX_DATA__I2C2_SCL 0x4001b8b0 */
++				/* MX6UL_PAD_UART5_RX_DATA__I2C2_SDA 0x4001b8b0 */
++				MX6UL_PAD_CSI_HSYNC__I2C2_SCL 0x4001b8b0
++				MX6UL_PAD_CSI_VSYNC__I2C2_SDA 0x4001b8b0
+ 			>;
+ 		};
+ 
+@@ -477,8 +523,26 @@
+ 			fsl,pins = <
+ 				MX6UL_PAD_UART2_TX_DATA__UART2_DCE_TX	0x1b0b1
+ 				MX6UL_PAD_UART2_RX_DATA__UART2_DCE_RX	0x1b0b1
+-				MX6UL_PAD_UART3_RX_DATA__UART2_DCE_RTS	0x1b0b1
+-				MX6UL_PAD_UART3_TX_DATA__UART2_DCE_CTS	0x1b0b1
++				/* MX6UL_PAD_UART3_RX_DATA__UART2_DCE_RTS	0x1b0b1	*/
++				/* MX6UL_PAD_UART3_TX_DATA__UART2_DCE_CTS	0x1b0b1 */
++			>;
++		};
++		pinctrl_uart3: uart3grp {
++			fsl,pins = <
++				MX6UL_PAD_UART3_TX_DATA__UART3_DCE_TX 0x1b0b1
++				MX6UL_PAD_UART3_RX_DATA__UART3_DCE_RX 0x1b0b1
++			>;
++		};
++		pinctrl_uart4: uart4grp {
++			fsl,pins = <
++				MX6UL_PAD_UART4_TX_DATA__UART4_DCE_TX 0x1b0b1
++				MX6UL_PAD_UART4_RX_DATA__UART4_DCE_RX 0x1b0b1
++			>;
++		};
++		pinctrl_uart5: uart5grp {
++			fsl,pins = <
++				MX6UL_PAD_UART5_TX_DATA__UART5_DCE_TX 0x1b0b1
++				MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX 0x1b0b1
+ 			>;
+ 		};
+ 
+@@ -599,6 +663,30 @@
+ 		spi-max-frequency = <29000000>;
+ 		spi-nor,ddr-quad-read-dummy = <6>;
+ 		reg = <0>;
++		/*partition@0x00001000 {
++			label = "uboot";
++			reg = <0x00001000 0x0ff000>;
++		};*/
++		partition@0x00000000 {
++			label = "uboot";
++			reg = <0x00000000 0x100000>;
++		};
++		partition@0x00100000 {
++			label = "kernel";
++			reg = <0x00100000 0x800000>;
++		};
++		partition@0x00900000 {
++			label = "dtb";
++			reg = <0x00900000 0x100000>;
++		};
++		partition@0x00a00000 {
++			label = "rootfs";
++			reg = <0x00a00000 0x1500000>;
++		};
++		partition@0x01f00000 {
++			label = "nvrom";
++			reg = <0x001f00000 0x100000>;
++		};
+ 	};
+ };
+ 
+@@ -611,7 +699,7 @@
+ 	assigned-clock-parents = <&clks IMX6UL_CLK_PLL4_AUDIO_DIV>;
+ 	assigned-clock-rates = <0>, <12288000>;
+ 
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &sim2 {
+@@ -648,12 +736,27 @@
+ &uart2 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_uart2>;
+-	fsl,uart-has-rtscts;
++	/* fsl,uart-has-rtscts; */
+ 	/* for DTE mode, add below change */
+ 	/* fsl,dte-mode; */
+ 	/* pinctrl-0 = <&pinctrl_uart2dte>; */
+ 	status = "okay";
+ };
++&uart3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart3>;
++	status = "okay";
++};
++&uart4 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart4>;
++	status = "okay";
++};
++&uart5 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart5>;
++	status = "okay";
++};
+ 
+ &usbotg1 {
+ 	dr_mode = "otg";
+diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
+index 76054ac..d4f08d2 100644
+--- a/arch/arm/mach-imx/mach-imx6ul.c
++++ b/arch/arm/mach-imx/mach-imx6ul.c
+@@ -128,7 +128,7 @@ put_node:
+ static inline void imx6ul_enet_init(void)
+ {
+ 	imx6ul_enet_clk_init();
+-	imx6ul_enet_phy_init();
++	/* imx6ul_enet_phy_init(); */
+ 	imx6_enet_mac_init("fsl,imx6ul-fec", "fsl,imx6ul-ocotp");
+ }
+ 
+diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+index ff95c02..4937617 100644
+--- a/drivers/char/Kconfig
++++ b/drivers/char/Kconfig
+@@ -624,6 +624,11 @@ config TILE_SROM
+ 	  device appear much like a simple EEPROM, and knows
+ 	  how to partition a single ROM for multiple purposes.
+ 
++config IMX6_GPIO
++	tristate "imx6 gpio control support"
++	default y	
++	help
++	  This is a char device for controling imx6 gpio.
+ source "drivers/char/xillybus/Kconfig"
+ 
+ source "drivers/char/imx_amp/Kconfig"
+diff --git a/drivers/char/Makefile b/drivers/char/Makefile
+index 1db1ff4..b63fa67 100644
+--- a/drivers/char/Makefile
++++ b/drivers/char/Makefile
+@@ -64,3 +64,4 @@ js-rtc-y = rtc.o
+ obj-$(CONFIG_TILE_SROM)		+= tile-srom.o
+ obj-$(CONFIG_XILLYBUS)		+= xillybus/
+ obj-$(CONFIG_HAVE_IMX_AMP)      += imx_amp/
++obj-$(CONFIG_IMX6_GPIO)		+= imx6_gpio.o
+diff --git a/drivers/char/imx6_gpio.c b/drivers/char/imx6_gpio.c
+new file mode 100644
+index 0000000..868a9c1
+--- /dev/null
++++ b/drivers/char/imx6_gpio.c
+@@ -0,0 +1,313 @@
++#include <linux/module.h>
++#include <linux/types.h>
++#include <linux/fs.h>
++#include <linux/errno.h>
++#include <linux/mm.h>
++#include <linux/sched.h>
++#include <linux/init.h>
++#include <linux/cdev.h>
++#include <asm/io.h>
++#include <asm/uaccess.h>
++#include <linux/timer.h>
++#include <asm/atomic.h>
++#include <linux/slab.h>
++#include <linux/device.h>
++#include <linux/gpio.h>
++#include <linux/ioctl.h>
++#include <linux/jiffies.h>
++#include <linux/delay.h>
++#include <linux/fb.h>
++#include <linux/moduleparam.h>
++#include <linux/platform_device.h>
++#include <linux/of_gpio.h>
++#include <linux/of_device.h>
++
++
++#define	IMX6_GPIO_MAGIC			'k'
++#define IMX6_REQ_GPIO        	_IOWR(IMX6_GPIO_MAGIC,0x20,int)	/* request gpio */
++#define IMX6_REL_GPIO			_IOWR(IMX6_GPIO_MAGIC,0x21,int)	/* free gpio */
++#define IMX6_INP_GPIO        	_IOWR(IMX6_GPIO_MAGIC,0x22,int)	/* set gpio input */
++#define IMX6_OUT_GPIO        	_IOWR(IMX6_GPIO_MAGIC,0x23,int)	/* set gpio output */
++#define IMX6_SET_GPIO        	_IOWR(IMX6_GPIO_MAGIC,0x24,int)	/* set gpio value */
++#define IMX6_GET_GPIO        	_IOWR(IMX6_GPIO_MAGIC,0x25,int)	/* get gpio value */
++#define IMX6_DISABEL_WATCHDOG 	_IOWR(IMX6_GPIO_MAGIC,0x26,int) /* disabled watchdog */
++#define IMX6_GPIO_MAXNR       	0x26
++#define IMX6_GPIO_MINNR       	0x20
++
++#define IMX6_MAJOR 255  										/* preset imx6_major */
++static int imx6_major = 0;
++struct class *imx6_gpio_class;
++static unsigned char feed_watchdog_flag = 1;					/* kernel layer feed watchdog flag */
++/*
++ * watchdog struct defined
++ */
++struct imx6_gpio_watchdog{
++    struct delayed_work work;
++	int watchdog_gpio;			/* watchdog gpio number */
++	u32 feeddog_interval_time;	/* feed dog interval time */
++};
++struct imx6_gpio_watchdog *imx6_watchdog;
++
++/*
++    This struct is used to controling gpio status
++*/
++struct UserData{
++    unsigned int gpio;  /* gpio number */
++    unsigned int state; /* gpio status */
++};
++
++/*
++	Device struct:This struct contain information about devices,
++	like this semaphore、lock、device special information and so on.
++*/
++struct imx6_gpio_dev
++{
++    struct cdev cdev;
++};
++
++struct imx6_gpio_dev *imx6_gpio_devp; /* device struct ptr */
++/* imx6 timer feed watchdog task */
++static void imx6_feed_watchdog(struct work_struct *work)
++{
++    __gpio_set_value(imx6_watchdog->watchdog_gpio,__gpio_get_value(imx6_watchdog->watchdog_gpio) ? 0:1 );
++
++    if(feed_watchdog_flag)
++    {
++        schedule_delayed_work(&imx6_watchdog->work,msecs_to_jiffies(imx6_watchdog->feeddog_interval_time));
++    }
++}
++
++/* imx6_gpio open */
++static int imx6_gpio_open(struct inode *inode, struct file *filp)
++{
++	/* stop feed watchdog wait user feed watchdog */
++	/* feed_watchdog_flag = 0;
++	cancel_delayed_work(&imx6_watchdog->work);
++	*/
++    return 0;
++}
++
++/* imx6_gpio close */
++static int imx6_gpio_close(struct inode *inode, struct file *filp)
++{
++	/* start kernel feed watchdog */
++	/* feed_watchdog_flag = 1;
++	schedule_delayed_work(&imx6_watchdog->work,msecs_to_jiffies(200));
++	*/
++    return 0;
++}
++
++/* imx6_gpio ioctl */
++static long imx6_gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
++{
++    void __user *argp = (void __user *)arg;
++    int err = 0;
++    struct UserData data;
++    /* check cmd is invaild */
++    if (_IOC_TYPE(cmd) != IMX6_GPIO_MAGIC)
++        return -EINVAL;
++    if (_IOC_NR(cmd) > IMX6_GPIO_MAXNR || _IOC_NR(cmd) < IMX6_GPIO_MINNR)
++        return -EINVAL;
++
++    /* check cmd type,check parameter is access ok */
++    if (_IOC_DIR(cmd) & _IOC_READ)
++        err = !access_ok(VERIFY_WRITE, (void *)arg, _IOC_SIZE(cmd));
++    else if (_IOC_DIR(cmd) & _IOC_WRITE)
++        err = !access_ok(VERIFY_READ, (void *)arg, _IOC_SIZE(cmd));
++    if (err)
++        return -EFAULT;
++    if(copy_from_user(&data,argp,sizeof(struct UserData)))
++    {
++        printk("%s:input argument is invalid\n",__func__);
++        return -EINVAL;
++    }
++    switch(cmd)
++    {
++        case IMX6_REQ_GPIO:
++            if(!gpio_is_valid(data.gpio))
++            {
++                return -EBUSY;
++            }
++            if(gpio_request(data.gpio, NULL))
++            {
++                return -EBUSY;
++            }
++            break;
++        case IMX6_REL_GPIO:
++			gpio_free(data.gpio);
++            break;
++        case IMX6_INP_GPIO:
++            if(gpio_direction_input(data.gpio))
++            {
++                return -EBUSY;
++            }
++            break;
++		case IMX6_OUT_GPIO:
++            if(gpio_direction_output(data.gpio,data.state))
++            {
++                return -EBUSY;
++            }
++            break;
++        case IMX6_GET_GPIO:
++            data.state = __gpio_get_value(data.gpio);
++            if(copy_to_user(argp, &data, sizeof(struct UserData)))
++            {
++                return -EINVAL;
++            }
++            break;
++        case IMX6_SET_GPIO:
++            __gpio_set_value(data.gpio,data.state);
++            break;
++		
++        case IMX6_DISABEL_WATCHDOG:
++            feed_watchdog_flag = data.state;
++            if(feed_watchdog_flag)
++                schedule_delayed_work(&imx6_watchdog->work,msecs_to_jiffies(200));
++            else
++                cancel_delayed_work(&imx6_watchdog->work);
++            break;
++			
++        default:
++			printk("%s:cmd = %d is not support\n",__func__,cmd);
++            return -EINVAL;
++    }
++    return 0;
++}
++
++static const struct file_operations imx6_gpio_fops =
++{
++    .owner = THIS_MODULE,
++    .open = imx6_gpio_open,
++    .release = imx6_gpio_close,
++    .unlocked_ioctl = imx6_gpio_ioctl,
++};
++
++/* init and register cdev */
++static void imx6_gpio_setup_cdev(struct imx6_gpio_dev *dev, int index)
++{
++
++    int err, devno = MKDEV(imx6_major, index);
++
++    /* init char devices */
++    cdev_init(&dev->cdev, &imx6_gpio_fops);
++    dev->cdev.owner = THIS_MODULE;
++    dev->cdev.ops = &imx6_gpio_fops;
++    err = cdev_add(&dev->cdev, devno, 1);
++    if(err)
++    {
++        printk("%s:err=%d,index=%d\n",__func__, err, index);
++    }
++}
++static int imx6_gpio_parse_dt(struct device *dev,
++				  struct imx6_gpio_watchdog *data)				  
++{
++	struct device_node *node = dev->of_node;
++	int ret = 0;
++	data->watchdog_gpio = of_get_named_gpio(node, "watchdog_gpio", 0);
++	ret = of_property_read_u32(node, "feeddog_interval_time",&data->feeddog_interval_time);
++	printk("%s:watchdog_gpio=%d,interval_time=%d.\n",__func__,data->watchdog_gpio,data->feeddog_interval_time);
++	if(ret < 0)
++		return ret;
++	/* init imx6 watchdog gpio */
++    gpio_request(data->watchdog_gpio, NULL);
++    gpio_direction_output(data->watchdog_gpio,0);
++	return ret;
++}
++
++static int imx6_gpio_probe(struct platform_device *pdev)
++{
++    int ret;
++    dev_t devno = MKDEV(imx6_major, 0);
++    /* request devices number,contain dynamic request and static request */
++    if(imx6_major)
++    {
++        ret = register_chrdev_region(devno, 1, "imx6_gpio");
++    }else
++    {
++        ret = alloc_chrdev_region(&devno,0,1,"imx6_gpio");
++        imx6_major = MAJOR(devno);
++    }
++    if(ret < 0)
++    {
++        goto fail_malloc;
++    }
++    imx6_gpio_devp = kmalloc(sizeof(struct imx6_gpio_dev), GFP_KERNEL);
++    if(!imx6_gpio_devp)
++    {
++        ret = -ENOMEM;
++        goto fail_malloc;
++    }
++
++    memset(imx6_gpio_devp,0,sizeof(struct imx6_gpio_dev));
++    imx6_gpio_setup_cdev(imx6_gpio_devp, 0);
++
++    imx6_gpio_class = class_create(THIS_MODULE, "imx6_gpio");
++    device_create(imx6_gpio_class, NULL, MKDEV(imx6_major, 0), NULL, "imx6_gpio");
++    /* feed watchdog gpio init */
++    imx6_watchdog = kmalloc(sizeof(struct imx6_gpio_watchdog), GFP_KERNEL);
++    if(!imx6_watchdog)
++    {
++        ret = -ENOMEM;
++        kfree(imx6_gpio_devp);
++        goto fail_malloc;
++    }
++	ret = imx6_gpio_parse_dt(&pdev->dev,imx6_watchdog);
++	if(ret < 0)
++	{
++		kfree(imx6_gpio_devp);
++		kfree(imx6_watchdog);
++		goto fail_malloc;
++	}
++    INIT_DELAYED_WORK(&imx6_watchdog->work,imx6_feed_watchdog);
++    schedule_delayed_work(&imx6_watchdog->work,msecs_to_jiffies(200));
++    printk("%s\n",__func__);
++    return ret;
++
++fail_malloc:
++    unregister_chrdev_region(devno,1);
++	printk("%s failed\n",__func__);
++	return ret;
++}
++
++static int imx6_gpio_remove(struct platform_device *pdev)
++{
++    cancel_delayed_work(&imx6_watchdog->work);
++    gpio_free(imx6_watchdog->watchdog_gpio);
++    kfree(imx6_watchdog);
++    cdev_del(&imx6_gpio_devp->cdev);  
++    kfree(imx6_gpio_devp);       
++    unregister_chrdev_region(MKDEV(imx6_major,0),1);    
++    device_destroy(imx6_gpio_class, MKDEV(imx6_major, 0));
++    class_destroy(imx6_gpio_class);
++	printk("%s\n",__func__);
++	return 0;
++}
++static struct of_device_id imx6_gpio_of_match[] = {
++	{ .compatible = "imx6_gpio" },
++	{ }
++};
++static struct platform_driver imx6_gpio_driver = {
++	.remove		= imx6_gpio_remove,
++	.driver		= {
++		.name	= "imx6_gpio",
++		.of_match_table	= of_match_ptr(imx6_gpio_of_match),
++	},
++};
++
++static int __init imx6_gpio_init(void)
++{
++	return platform_driver_probe(&imx6_gpio_driver,
++			imx6_gpio_probe);
++}
++module_init(imx6_gpio_init);
++
++static void __exit imx6_gpio_exit(void)
++{
++	platform_driver_unregister(&imx6_gpio_driver);
++}
++module_exit(imx6_gpio_exit);
++
++module_param(imx6_major, int, S_IRUGO);
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Driver for Imx6ulevk gpio control");
++MODULE_AUTHOR("Daemon Qiang <601097566@qq.com>");
+-- 
+1.9.1
+

@@ -1,0 +1,68 @@
+goahead: 5: mbedtls: Supported Ciphers
+goahead: 5: mbedtls: TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 (0xC02C)
+goahead: 5: mbedtls: TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xC030)
+goahead: 5: mbedtls: TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 (0x009F)
+goahead: 5: mbedtls: TLS_ECDHE_ECDSA_WITH_AES_256_CCM (0xC0AD)
+goahead: 5: mbedtls: TLS_DHE_RSA_WITH_AES_256_CCM (0xC09F)
+goahead: 5: mbedtls: TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384 (0xC024)
+goahead: 5: mbedtls: TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 (0xC028)
+goahead: 5: mbedtls: TLS_DHE_RSA_WITH_AES_256_CBC_SHA256 (0x006B)
+goahead: 5: mbedtls: TLS_ECDHE_ECDSA_WITH_AES_256_CCM_8 (0xC0AF)
+goahead: 5: mbedtls: TLS_DHE_RSA_WITH_AES_256_CCM_8 (0xC0A3)
+goahead: 5: mbedtls: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 (0xC02B)
+goahead: 5: mbedtls: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xC02F)
+goahead: 5: mbedtls: TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 (0x009E)
+goahead: 5: mbedtls: TLS_ECDHE_ECDSA_WITH_AES_128_CCM (0xC0AC)
+goahead: 5: mbedtls: TLS_DHE_RSA_WITH_AES_128_CCM (0xC09E)
+goahead: 5: mbedtls: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 (0xC023)
+goahead: 5: mbedtls: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 (0xC027)
+goahead: 5: mbedtls: TLS_DHE_RSA_WITH_AES_128_CBC_SHA256 (0x0067)
+goahead: 5: mbedtls: TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8 (0xC0AE)
+goahead: 5: mbedtls: TLS_DHE_RSA_WITH_AES_128_CCM_8 (0xC0A2)
+goahead: 5: mbedtls: TLS_RSA_WITH_AES_256_GCM_SHA384 (0x009D)
+goahead: 5: mbedtls: TLS_RSA_WITH_AES_256_CCM (0xC09D)
+goahead: 5: mbedtls: TLS_RSA_WITH_AES_256_CBC_SHA256 (0x003D)
+goahead: 5: mbedtls: TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384 (0xC032)
+goahead: 5: mbedtls: TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384 (0xC02A)
+goahead: 5: mbedtls: TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384 (0xC02E)
+goahead: 5: mbedtls: TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384 (0xC026)
+goahead: 5: mbedtls: TLS_RSA_WITH_AES_256_CCM_8 (0xC0A1)
+goahead: 5: mbedtls: TLS_RSA_WITH_AES_128_GCM_SHA256 (0x009C)
+goahead: 5: mbedtls: TLS_RSA_WITH_AES_128_CCM (0xC09C)
+goahead: 5: mbedtls: TLS_RSA_WITH_AES_128_CBC_SHA256 (0x003C)
+goahead: 5: mbedtls: TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256 (0xC031)
+goahead: 5: mbedtls: TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256 (0xC029)
+goahead: 5: mbedtls: TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256 (0xC02D)
+goahead: 5: mbedtls: TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256 (0xC025)
+goahead: 5: mbedtls: TLS_RSA_WITH_AES_128_CCM_8 (0xC0A0)
+goahead: 5: mbedtls: TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA (0xC00A)
+goahead: 5: mbedtls: TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA (0xC014)
+goahead: 5: mbedtls: TLS_DHE_RSA_WITH_AES_256_CBC_SHA (0x0039)
+goahead: 5: mbedtls: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA (0xC009)
+goahead: 5: mbedtls: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA (0xC013)
+goahead: 5: mbedtls: TLS_DHE_RSA_WITH_AES_128_CBC_SHA (0x0033)
+goahead: 5: mbedtls: TLS_RSA_WITH_AES_256_CBC_SHA (0x0035)
+goahead: 5: mbedtls: TLS_ECDH_RSA_WITH_AES_256_CBC_SHA (0xC00F)
+goahead: 5: mbedtls: TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA (0xC005)
+goahead: 5: mbedtls: TLS_RSA_WITH_AES_128_CBC_SHA (0x002F)
+goahead: 5: mbedtls: TLS_ECDH_RSA_WITH_AES_128_CBC_SHA (0xC00E)
+goahead: 5: mbedtls: TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA (0xC004)
+goahead: 4: Upload directory is tmp
+User "julie" has abilities: view breathe goahead: 5: 
+User "joshua" has abilities: purchase view manage breathe goahead: 5: 
+User "mary" has abilities: view breathe goahead: 5: 
+User "stzn" has abilities: purchase view manage breathe goahead: 5: 
+User "peter" has abilities: view breathe goahead: 5: 
+goahead: 2: Configuration for Embedthis GoAhead
+goahead: 2: ---------------------------------------------
+goahead: 2: Version:            4.0.0
+goahead: 2: BuildType:          Debug
+goahead: 2: CPU:                arm
+goahead: 2: OS:                 linux
+goahead: 2: Host:               
+goahead: 2: Directory:          /mnt/goahead-master/test
+goahead: 2: Documents:          web
+goahead: 2: Configure:          me -d -q -platform linux-x86-static -static -configure . -gen make
+goahead: 2: ---------------------------------------------
+goahead: 2: Started http://*:80
+goahead: 2: Started https://*:443

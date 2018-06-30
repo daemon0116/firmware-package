@@ -1,0 +1,1456 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>uboot控制台</title>
+	<!--  <script src="js/jquery-1.10.2.js"></script>  -->
+	<!--  <script src="js/jquery.form.js"></script> -->
+	<script src="js/jquip.min.js"></script> 
+	<!--   <script src="js/jquip.ajax.js"></script> -->
+   <!--<script src="js/jquery_ui.min.js"></script> -->
+	 
+	<script language="javascript" src="js/rtuset.js" type="text/javascript"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<link rel="stylesheet" type="text/css" href="css/stylepc.css">
+	<link rel="stylesheet" href="css/index.css">
+	<meta http-equiv="Content-Type" content="text/html;charset='utf-8'" />
+	
+	<script type="text/javascript">
+			ifvisible.setIdleDuration(5*60);
+
+			ifvisible.idle(function(){
+				//exit();
+				document.body.style.opacity = 0.5;
+			});
+
+			ifvisible.wakeup(function(){
+				document.body.style.opacity = 1;
+			});
+	</script>
+</head>
+<style>
+	.top .top_r a {
+		margin-top: 24px;
+		line-height: 56px;
+		font-size: 12px;
+		width: 60px;
+		color: #fff;
+		display:inline-block;
+		background: url(../../images/EXIT.png) 24% 94% no-repeat;
+	}
+</style>
+<body>
+	<div class="container">
+		<div class="top">
+		<div class="top_l">
+			<!-- <span><img src="../../images/logo.png"></span> -->
+			<p>uboot控制台</p>
+		</div>
+		<div class="top_r">
+			<a href="#" onclick="exit();">退出</a>
+		</div>
+		
+		</div>
+	</div>
+	<input id="txt_refresh_name" type="hidden" value="1001" />
+	<div class="container" id='container' style="min-height:546px">
+		<div class="menu">
+			<h3 onclick="bullet('1001')" class="tu1">系统信息</h3>
+			<ul class="ulmenu1"></ul>
+			<h3 onclick="bullet('1002')" class="tu2">固件更新</h3>
+			<ul class="ulmenu2"></ul>
+			<h3 onclick="bullet('1005')" class="tu3">系统备份</h3>
+			<ul class="ulmenu3"></ul>
+			<h3 onclick="bullet('1004')" class="tu4">恢复设置</h3>
+			<ul class="ulmenu4"></ul>
+			<h3 onclick="bullet('1005')" class="tu5">重启</h3>
+			<ul class="ulmenu5"></ul>
+			<h3 onclick="bullet('1006')" class="tu6">关于</h3>
+			<ul class="ulmenu6"></ul>
+		</div>
+		<div class="content">
+			<div class="get-menu">
+			</div>
+			<div class="menu1 menu_tab">
+				<div id="tab1" class="tab active">
+					<h2>系统信息</h2>
+					<div class="innerbox">
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								设备型号：
+							</li>
+							<li class="detail_r">
+								<div id="u_type"></div>
+							</li>
+						</ul>
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								硬件版本：
+							</li>
+							<li class="detail_r">
+								<div id="u_hardware_version"></div>
+							</li>
+						</ul>
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								序列号：
+							</li>
+							<li class="detail_r">
+								<div id="u_serial_no"></div>
+							</li>
+						</ul>
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								内核版本：
+							</li>
+							<li class="detail_r">
+								<div id="u_kernel_version"></div>
+							</li>
+						</ul>
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								应用版本：
+							</li>
+							<li class="detail_r">
+								<div id="u_app_version"></div>
+							</li>
+						</ul>
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								产品激活：
+							</li>
+							<li class="detail_r">
+								<div id="u_activate"></div>
+							</li>
+						</ul>
+
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								激活码：
+							</li>
+							<li class="detail_r">
+								<div id="u_activate_no"></div>
+							</li>
+						</ul>
+
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								CPU：
+							</li>
+							<li class="detail_r">
+								<div id="u_cpu"></div>
+							</li>
+						</ul>
+
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								内存：
+							</li>
+							<li class="detail_r">
+								<div id="u_memory"></div>
+							</li>
+						</ul>
+
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								Flash：
+							</li>
+							<li class="detail_r">
+								<div id="u_flash"></div>
+							</li>
+						</ul>
+
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								以太网：
+							</li>
+							<li class="detail_r">
+								<div id="u_ethernet"></div>
+							</li>
+						</ul>
+
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								时钟频率：
+							</li>
+							<li class="detail_r">
+								<div id="u_clock"></div>
+							</li>
+						</ul>
+
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								编译日期：
+							</li>
+							<li class="detail_r">
+								<div id="u_compile_date"></div>
+							</li>
+						</ul>
+						
+					</div>
+				</div>
+
+			</div>
+
+			<div class="menu2 menu_tab">
+				<div  id="tab2" class="tab">
+					<h2>固件更新</h2>
+					<div class="innerbox">
+						<iframe name="firmwareFrame" id="firmwareFrame" frameborder="0" height="0" width="0"></iframe>
+						<form method="POST" action="/action/firmwareUpdate" enctype="multipart/form-data" target="firmwareFrame" name="firmwareForm">
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								类型：
+							</li>
+							<li class="detail_r">
+								<select class="select_in w320" name="u_type" id="u_type">
+									<option value="1">
+										Bootloader
+									</option>
+									<option value="2">
+										Kernel
+									</option>									
+									<option value="3">
+										Dtb
+									</option>
+									<option value="4">
+										Rootfs
+									</option>
+								</select>
+							</li>
+
+						</ul>
+
+						<ul class="detail clearfix">
+							<li class="detail_l">
+								文件：
+							</li>
+							<li class="detail_r" style="width: 66%;line-height: 20px;height: 18px; ">
+								<input type="file" name="file" id="file_upload" class="h25_w300" />
+							</li>
+						</ul>
+						<ul class="detail">
+							<li class="detail_l">
+								&nbsp;
+							</li>
+							<li class="detail_r">
+								<div class="text_right width_350"><input type="submit" value="执行" style="text-indent: 0em;text-align: center!important;width:78px;float: right;"  class="w45_left"></div>
+							</li>
+						</ul>
+						</form>
+					</div>
+				</div>
+			</div>
+			
+
+			
+			
+			<div class="menu3 menu_tab">
+				<div  id="tab3_1" class="tab">
+					<h2>系统备份</h2>
+					<div class="innerbox">
+						<ul class="detail">
+							<li class="detail_l">
+								Bootloader：
+							</li>
+							<li class="ver-middle">
+								<input type="button" onclick="SystemBackup(1);"
+										value="执行" style="text-indent: 0em;text-align: center!important;width:78px;float: right;"  class="w45_left">
+							</li>
+						</ul>
+
+						<ul class="detail">
+							<li class="detail_l">
+								内核：
+							</li>
+							<li class="ver-middle">
+								<input type="button" onclick="SystemBackup(2);"
+									   value="执行" style="text-indent: 0em;text-align: center!important;width:78px;float: right;"  class="w45_left">
+							</li>
+						</ul>
+						<ul class="detail">
+							<li class="detail_l">
+								Dtb：
+							</li>
+							<li class="ver-middle">
+								<input type="button" onclick="SystemBackup(3);"
+									   value="执行" style="text-indent: 0em;text-align: center!important;width:78px;float: right;"  class="w45_left">
+							</li>
+						</ul>
+						<ul class="detail">
+							<li class="detail_l">
+								文件系统：
+							</li>
+							<li class="ver-middle">
+								<input type="button" onclick="SystemBackup(4);"
+									   value="执行" style="text-indent: 0em;text-align: center!important;width:78px;float: right;"  class="w45_left">
+							</li>
+						</ul>
+
+						<ul class="detail">
+							<li class="detail_l">
+								配置文件：
+							</li>
+							<li class="ver-middle">
+								<input type="button" onclick="SystemBackup(5);"
+									   value="执行" style="text-indent: 0em;text-align: center!important;width:78px;float: right;"  class="w45_left">
+							</li>
+						</ul>
+
+						<ul class="detail">
+							<li class="detail_l">
+								数据库：
+							</li>
+							<li class="ver-middle">
+								<input type="button" onclick="SystemBackup(6);"
+									   value="执行" style="text-indent: 0em;text-align: center!important;width:78px;float: right;"  class="w45_left">
+							</li>
+						</ul>
+
+
+					</div>
+				</div>
+			</div>
+
+			<div class="menu4 menu_tab">
+				<div  id="tab4_1" class="tab">
+					<h2>恢复设置</h2>
+					<div class="innerbox">
+						<ul class="detail">
+							<li class="detail_l">
+								恢复权限密码：
+							</li>
+							<li class="detail_r">
+								<input type="text" value="" id="u_password">
+							</li>
+						</ul>
+
+
+						<ul class="detail">
+							<li class="detail_l">
+								&nbsp;
+							</li>
+							<li class="detail_r">
+								<div class="text_right width_350"><input type="button" onclick="Restore();" value="执行" style="text-indent: 0em;text-align: center!important;width:78px;float: right;"  class="w45_left"></div>
+							</li>
+						</ul>
+
+
+					</div>
+				</div>
+			</div>
+
+			<div class="menu5 menu_tab">
+				<div  id="tab5_1" class="tab">
+					<h2>重启</h2>
+					<div class="innerbox">
+
+						<ul class="detail">
+							<li class="detail_l">
+								&nbsp;
+							</li>
+							<li class="detail_r">
+								<div class="text_right width_350"><input type="button" onclick="Restart();" value="执行重启" style="text-indent: 0em;text-align: center!important;width:78px;float: right;"  class="w45_left"></div>
+							</li>
+						</ul>
+
+
+					</div>
+				</div>
+			</div>
+
+			<div class="menu6 menu_tab">
+				<div  id="tab6_1" class="tab">
+					<h2>关于</h2>
+					<div class="innerbox">
+
+
+					</div>
+				</div>
+			</div>
+	</div>
+	<div id="mainbox" class="d_none"> <div id="box0"></div><div id="box1">↓</div> <div id="items"> </div> </div>
+	<div id="mainbox" class="d_none"> <div id="box00"></div><div id="box11">↓</div> <div id="itemss" > </div> </div>
+
+	<div class="container">
+	<div class="foot">
+		<span>Copyright © 2017.舜通智能 All rights reserved.</span>
+	</div>
+	</div>
+
+
+<!--dialog-->
+ <div class="theme-popover" id="data_dialog">
+	 <div class="theme-poptit">
+		  <a href="javascript:;" title="关闭" class="close">×</a>
+		  <h3><strong>IO驱动属性</strong></h3>
+	 </div>
+	 <div class="theme-popbod dform dialog_content">
+		   <ul class="list-ul-tab clearfix J_data_tab">
+			   <li class="selected" data-link="dataAttrtab1">IO连接属性</li>
+			   <li  data-link="dataAttrtab2">报警属性</li>
+			   <li  data-link="dataAttrtab3">存盘属性</li>
+		   </ul>
+
+		   <div class="dialog_content_body clearfix">
+			<div id="dataAttrtab1" class="data_tab_content">
+					<div class="clearfix">
+						<ul class="detail">
+							<li class="detail_l">
+							   <input type="checkbox" id="var_ext_dev_rtu_self" value="var_ext_dev_rtu_self" style="cursor:pointer" onchange="ext_oncheck_self_dev()"> 
+							</li>
+							<li class="detail_r">
+							   <label for="var_ext_dev_rtu_self" style="cursor:pointer">&nbsp;RTU本机驱动变量</label>
+							</li>
+						</ul>
+						
+						<ul class="detail" id="var_ext_dev_rtu_self_list_ul" style="display:none">
+							<li class="detail_l">
+							  &nbsp;连接端口：
+							</li>
+							<li class="detail_r">
+								<select id="var_ext_dev_rtu_self_list" onchange="">				
+								<OPTION VALUE="0" SELECTED>AI_1</OPTION>
+								<OPTION VALUE="1">AI_2</OPTION>
+								<OPTION VALUE="2">AI_3</OPTION>
+								<OPTION VALUE="3">AI_4</OPTION>
+								<OPTION VALUE="4">AI_5</OPTION>
+								<OPTION VALUE="5">AI_6</OPTION>
+								<OPTION VALUE="6">AI_7</OPTION>
+								<OPTION VALUE="7">AI_8</OPTION>
+								</select>
+							</li>
+						</ul>
+					</div>
+					<ul class="detail">
+						<li class="detail_l">
+						  变量名：
+						</li>
+						<li class="detail_r">
+							 <input type="text" id="var_ext_name1"/>
+						</li>
+					</ul>
+
+					<ul class="detail">
+						<li class="detail_l">
+						  别名：
+						</li>
+						<li class="detail_r">
+							 <input type="text" id="var_ext_alias1"/>
+						</li>
+					</ul>
+					
+					<div id='ext_not_rtu_self_div'>
+						<ul class="detail">
+							<li class="detail_l">
+							   端口名称：
+							</li>
+							<li class="detail_r">
+							   <select id="var_ext_pro_dev" onchange="refreshOneProtoDevList(false,'var_ext_pro_dev','var_ext_pro_type');ext_onchange_proto(true);">
+							   </select>
+							</li>
+						</ul>
+
+						 <ul class="detail">
+							<li class="detail_l">
+							   设备地址：
+							</li>
+							<li class="detail_r">
+								<input type="text" id="var_ext_slaveaddr1" maxlength="12"/>
+							</li>
+						</ul>
+
+						 <ul class="detail">
+							<li class="detail_l">
+							   驱动协议：
+							</li>
+							<li class="detail_r">
+							<select id="var_ext_pro_type" onchange="ext_onchange_proto(true);">
+							</select>
+							</li>
+						</ul>
+					</div>
+			
+					<ul class="detail">
+						<li class="detail_l">
+						  数据类型：
+						</li>
+						<li class="detail_r" style="width:30%;">
+							<select id="var_ext_vartype1" onchange="onVarExtVartypeChange(this, true)">				
+							<OPTION VALUE="0">BIT</OPTION>
+							<OPTION VALUE="1" SELECTED>INT8</OPTION>
+							<OPTION VALUE="2">UINT8</OPTION>
+							<OPTION VALUE="3">INT16</OPTION>
+							<OPTION VALUE="4">UINT16</OPTION>
+							<OPTION VALUE="5">INT32</OPTION>
+							<OPTION VALUE="6">UINT32</OPTION>
+							<OPTION VALUE="7">FLOAT</OPTION>
+							<OPTION VALUE="8">DOUBLE</OPTION>
+							<OPTION VALUE="9">ARRAY</OPTION>
+						</select>
+						</li>
+						<li class="detail_r" style="width:39.5%;">
+							<select id="var_ext_vartype_rule">
+						</select>
+						</li>
+					</ul>
+
+					<div id='ext_not_rtu_self_div1'>
+						<ul class="detail">
+							<li class="detail_l">
+							   自定义协议：
+							</li>
+							<li class="detail_r">
+								<input type="text" class=""/>
+							</li>
+						</ul>
+
+						<ul class="detail">
+							<li class="detail_l">
+							   读写长度：
+							</li>
+							<li class="detail_r">
+								<input type="text" id="var_ext_varsize"/>
+							</li>
+						</ul>
+					</div>
+					
+					<div id='ext_dlt546_div' style="display:none">
+						 <ul class="detail">
+							<li class="detail_l">
+							  数据项：
+
+							<li class="detail_r">
+							<select id="var_ext_dlt546_op">		
+								<OPTION VALUE="--0" SELECTED>------(当前)组合有功-------</option>						
+								<OPTION VALUE="0x00000000">(组合有功)总</option>							 
+ 
+								<OPTION VALUE="--1">------(当前)正向有功-------</option>						
+								<OPTION VALUE="0x00010000">(正向有功)总</option>							
+
+
+								<OPTION VALUE="--2">------(当前)反向有功-------</option>						
+								<OPTION VALUE="0x00020000">(反向有功)总</option>							
+
+
+								<OPTION VALUE="--3">------(当前)组合无功1------</option>						
+								<OPTION VALUE="0x00030000">(组合无功1)总</option>							
+
+								<OPTION VALUE="--4">------(当前)组合无功2------</option>						
+								<OPTION VALUE="0x00040000">(组合无功2)总</option>							
+
+								<OPTION VALUE="--5">------------电压------------</option>						
+								<OPTION VALUE="0x02010100">(A相)电压</option>							
+								<OPTION VALUE="0x02010200">(B相)电压</option>
+								<OPTION VALUE="0x02010300">(C相)电压</option>
+
+								<OPTION VALUE="--6">------------电流------------</option>						
+								<OPTION VALUE="0x02020100">(A相)电流</option>							
+								<OPTION VALUE="0x02020200">(B相)电流</option>
+								<OPTION VALUE="0x02020300">(C相)电流</option>
+
+								<OPTION VALUE="--7">-------瞬时有功功率--------</option>						
+								<OPTION VALUE="0x02030000">(瞬时有功功率)总</option>							
+
+
+								<OPTION VALUE="--8">-------瞬时无功功率--------</option>						
+								<OPTION VALUE="0x02040000">(瞬时无功功率)总</option>							
+
+								<OPTION VALUE="--9">---------功率因素----------</option>						
+								<OPTION VALUE="0x02060000">(功率因素)总</option>							
+
+							</select>
+							</li>
+						</ul>
+					</div>
+
+					<div id='ext_modbus_div' style="display:none">
+						 <ul class="detail">
+							<li class="detail_l">
+							  初值：
+							</li>
+							<li class="detail_r">
+								   <input type="text" id="var_ext_vinit"/>
+							</li>
+						</ul>
+
+						 <ul class="detail">
+							<li class="detail_l">
+							   读写类型：
+							</li>
+							<li class="detail_r">
+							<select id="var_ext_varrw">				
+								<OPTION VALUE="0" SELECTED>只读</option>
+								<OPTION VALUE="1">只写</option>
+								<OPTION VALUE="2">读写</option>
+							</select>
+							</li>
+						</ul>
+					
+						<ul class="detail">
+							<li class="detail_l">
+							   最大值：
+							</li>
+							<li class="detail_r">
+							   <input type="text" id="var_ext_vmax"/>
+							</li>
+						</ul>
+
+						<ul class="detail" >
+							<li class="detail_l">
+							   寄存器区：
+							</li>
+							<li class="detail_r">
+								 <select id="var_modbus_op">
+									<!--
+									<option value="0">01(读取线圈)</option>
+									<option value="1">02(读取输入)</option>
+									<option value="2">03(读取保持寄存器)</option>
+									<option value="3">04(读取输入寄存器)</option>
+									<option value="4">05(强制线圈通断)</option>
+									<option value="5">06(预置一个寄存器)</option>
+									<option value="6">10(预置两个寄存器)</option>
+									-->
+									<option value="3" SELECTED>03（读取保持寄存器）</option>
+									<option value="4">04（读取输入寄存器）</option>
+								</select>
+							</li>
+						</ul>
+
+						   <ul class="detail" >
+							<li class="detail_l">
+							   最小值： 
+							</li>
+							<li class="detail_r">
+							   <input type="text" id="var_ext_vmin"/>
+							</li>
+						</ul>
+						
+						<ul class="detail" >
+							<li class="detail_l">
+							   寄存器地址：
+							</li>
+							<li class="detail_r">
+							
+							<input type="text" id="var_ext_extaddr"/>
+								 
+							</li>
+						</ul>
+
+						<ul class="detail">
+							<li class="detail_l">
+							  变比：
+							</li>
+							<li class="detail_r">
+								<input type="text" id="var_ext_vratio"/>
+							</li>
+						</ul>
+
+						<ul class="detail">
+							<li class="detail_l">
+							  偏移地址：
+							</li>
+							<li class="detail_r">
+								 <input type="text" id="var_ext_extaddrofs"/>
+							</li>
+						</ul>
+
+						<ul class="detail">
+							<li class="detail_l">
+							  同帧地址：
+							</li>
+							<li class="detail_r">
+								 <input type="text" id="var_ext_sync_faddr"/>
+							</li>
+						</ul>
+					
+					</div>
+
+					<ul class="detail">
+						<li class="detail_l">
+						  映射地址：
+						</li>
+						<li class="detail_r">
+							 <input type="text" id="var_ext_addr"/>
+						</li>
+					</ul>
+					
+					<ul class="detail">
+						<li class="detail_l">
+						  错误处理：
+						</li>
+						<li class="detail_r">
+							 <select id="var_err_op">
+								<option value="0" SELECTED>不处理（保留原值）</option>
+								<option value="1">清零</option>
+							</select>
+						</li>
+					</ul>
+
+					<ul class="detail">
+						<li class="detail_l">
+						  容错次数：
+						</li>
+						<li class="detail_r">
+							 <input type="text" id="var_err_cnt"/>
+						</li>
+					</ul>
+
+					<ul class="detail" style="overflow: visible;">
+						<li class="detail_l">
+						  表达式：
+						</li>
+						<li class="detail_r">
+							<input type="text" style="width:238%" id="var_ext_exp"/>
+						</li>
+					</ul> 
+				  
+				</ul>
+							
+			 </div>
+					
+
+			  <div id="dataAttrtab2" class="hide data_tab_content">
+					<div class="clearfix">
+						<ul class="detail">
+							<li class="detail_l">
+							   <input type="checkbox"> 
+							</li>
+							<li class="detail_r">
+							   &nbsp;是否报警
+							</li>
+						</ul>
+					</div>
+					<ul class="detail">
+						<li class="detail_l">
+						   告警模式: 
+						</li>
+						<li class="detail_r">
+						   <select>
+							 <option VALUE="0" SELECTED>超限告警</option>
+							<option VALUE="1">偏移告警</option>
+							<option VALUE="2">超上限告警</option>
+							<option VALUE="3">越上上限告警</option>
+							<option VALUE="4">越下限告警</option>
+							<option VALUE="5">越下下限告警</option>
+							<option VALUE="6">正偏移警告</option>
+							<option VALUE="7">负偏移警告</option>
+							<option VALUE="8">固定值警告</option>
+						</select>
+						</li>
+					</ul>
+
+					 <ul class="detail">
+						<li class="detail_l">
+						   告警属性：
+						</li>
+						<li class="detail_r">
+						<select>				
+							<option VALUE="0" SELECTED>1</option>
+							<option VALUE="1">偏移告警</option>
+						</select>
+						</li>
+					</ul>
+
+					 <ul class="detail">
+								<li class="detail_l">
+								   上限: 
+								</li>
+								<li class="detail_r">
+									<input type="text"/>
+								</li>
+							</ul>
+
+						<ul class="detail">
+								<li class="detail_l">
+								   上限值: 
+								</li>
+								<li class="detail_r">
+								   <input type="text"/>
+								</li>
+							</ul>
+
+							<ul class="detail" >
+								<li class="detail_l">
+								   上上限:
+								</li>
+								<li class="detail_r">
+									 <input type="text"/>
+								</li>
+							</ul>
+
+							   <ul class="detail" >
+								<li class="detail_l">
+								  上上限值: 
+								</li>
+								<li class="detail_r">
+									 <input type="text"/>
+								</li>
+							</ul>
+
+
+
+							 <ul class="detail" >
+								<li class="detail_l">
+								   下限
+								</li>
+								<li class="detail_r">
+									 <input type="text"/>
+								</li>
+							</ul>
+
+							 <ul class="detail">
+								<li class="detail_l">
+								  下限值：
+								</li>
+								<li class="detail_r">
+									   <input type="text"/>
+								</li>
+							</ul>
+
+							<ul class="detail">
+								<li class="detail_l">
+								  正偏：
+								</li>
+								<li class="detail_r">
+									<input type="text"/>
+								</li>
+							</ul>
+
+
+							<ul class="detail">
+								<li class="detail_l">
+								  正偏值：
+								</li>
+								<li class="detail_r">
+									<input type="text"/>
+								</li>
+							</ul>
+
+							 <ul class="detail">
+								<li class="detail_l">
+								  负偏：
+								</li>
+								<li class="detail_r">
+									 <input type="text"/>
+								</li>
+							</ul>
+
+							<ul class="detail">
+								<li class="detail_l">
+								  负偏值：
+								</li>
+								<li class="detail_r">
+									 <input type="text"/>
+								</li>
+							</ul>
+
+							<ul class="detail">
+								<li class="detail_l">
+								  所定值：
+								</li>
+								<li class="detail_r">
+									 <input type="text"/>
+								</li>
+							</ul>
+
+							<ul class="detail" >
+								<li class="detail_l">
+								  报警级别：
+								</li>
+								<li class="detail_r">
+									<input type="text"/>
+								</li>
+							</ul> 
+						  
+						</ul>
+							
+						</div>
+
+					
+
+
+			 <div id="dataAttrtab3" class="hide data_tab_content">
+					<div class="clearfix">
+						<ul class="detail ver-middle">
+							<li class="detail_l">
+							   <input type="checkbox" id="var_ext_storage_en1"> 
+							</li>
+							<li class="detail_r w-auto">
+							   &nbsp;是否存盘
+							</li>
+						</ul>
+
+						<ul class="detail">
+							
+						</ul>
+					</div>
+
+				<div class="clearfix">
+					 <ul class="detail">
+						<li class="detail_l">
+						   存盘方式: 
+						</li>
+						<li class="detail_r">
+						   <select class="dform">
+							<option value="0">周期存盘</option>
+							<option value="1">变位存盘</option>
+							<option value="2">整点存盘</option>
+						  </select>
+						</li>
+					</ul>
+				</div>
+
+				 <div class="clearfix">
+					 <ul class="detail">
+						<li class="detail_l">
+						   存盘时间: 
+						</li>
+						<li class="detail_r">
+						   <input type="text" name="" id="var_ext_storage_step">
+						</li>
+					</ul>
+				</div>
+				   
+
+					<div class="clearfix">
+						<ul class="detail">
+							<li class="detail_l">
+							   <input type="checkbox"> 
+							</li>
+							<li class="detail_r">
+							   &nbsp;是否判断存盘数据范围
+							</li>
+						</ul>
+					</div>
+
+					 <div class="clearfix">
+						 <ul class="detail">
+							<li class="detail_l">
+							   上限: 
+							</li>
+							<li class="detail_r">
+							   <input type="text" name="">
+							</li>
+						</ul>
+					</div>
+
+					<div class="clearfix">
+						 <ul class="detail">
+							<li class="detail_l">
+							   下限: 
+							</li>
+							<li class="detail_r">
+							   <input type="text" name="">
+							</li>
+						</ul>
+					</div>
+							
+						</div>
+
+					</div>
+
+						<div class="text_right "> 
+							<button class="mt10 dialog_ok_btn" onclick="hideDialog('data_dialog');applyVarExtInfo(0,1);setVarExtInfo();">
+								应用
+							</button>
+						</div>
+			   
+	 </div>
+</div>
+<div class="theme-popover-mask"></div>
+<!--配置文件弹窗-->
+<div class="theme-popover" id="remote_dialog">
+	 <div class="theme-poptit">
+		  <a href="javascript:;" title="关闭" class="close">×</a>
+		  <h3><strong>配置</strong></h3>
+	 </div>
+	 <div class="theme-popbod dform dialog_content">
+		 <div  class="data_tab_content">
+			 <textarea id="remote_config_textarea"></textarea>
+		 </div>
+		  <div class="text_right "> 
+				<button class="mt10  button dialog_ok_btn" id="dialog_remote_ok_btn">
+					保存
+				</button>
+			</div>
+	 </div>
+</div>
+
+<div class="theme-popover" id="GPRS_dialog">
+	 <div class="theme-poptit">
+		  <a href="javascript:;" title="关闭" class="close">×</a>
+		  <h3><strong>配置</strong></h3>
+	 </div>
+	 <div class="theme-popbod dform dialog_content">
+		 <div  class="data_tab_content">
+			 <textarea id="GPRS_config_textarea"></textarea>
+		 </div>
+		  <div class="text_right "> 
+				<button class="mt10  button dialog_ok_btn" id="dialog_GPRS_ok_btn">
+					保存
+				</button>
+			</div>
+	 </div>
+</div>
+
+</body>
+<script language="javascript" src="js/index_link.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		function exit()
+		{
+			//MyGetJSONWithArg("","/auth-bin/logout?","");
+			self.location = 'login.html';
+		}
+	</script>
+	<script>
+		$(function(){
+			// $("#container").height(document.body.clientHeight-45);
+		})
+</script>
+<script type="text/javascript" src="js/uboot.js"></script>
+<script type="text/javascript" src="js/pc.js"></script>
+<script type="text/javascript">
+function initUpload(){
+		var progressbar2 = $( "#progressbar2" );
+		var progressLabel2 = $( "#progressbar2_label" );
+		
+		$("#imgform_submit").off().on("click", function(){
+
+			var options = {
+				formId:"imgform",
+				type:"post",
+				uploadProgress: function(event, position, total, percentComplete) {
+					 progressLabel2.text(percentComplete+"%");
+					 $("#progressbar2_value").css("width",percentComplete+"%");
+				},
+				error:function(data) {
+					alert("升级包发送失败,请重试！");
+				}, 
+				success: function(data) {
+				   alert("升级包发送完成,升级过程约30秒...");
+				   location.reload(true);
+				}
+			};
+		  
+			if(typeof FormData != "function"){
+				 $("#progressbar2").hide();
+			}else{
+				$("#progressbar2").show();
+			}
+
+			ajaxUpload(options);
+		})
+
+	   var progressbar = $( "#progressbar" );
+		var progressLabe = $( "#progressbar_label" );
+	
+		$("#cfgform_submit").off().on("click", function(){
+			
+
+			var options = {
+				formId:"cfgform",
+				type:"post",
+				uploadProgress: function(event, position, total, percentComplete) {
+					 progressLabe.text(percentComplete+"%");
+					$("#progressbar_value").css("width",percentComplete+"%");
+				},
+				error:function(data) {
+					alert("配置文件发送失败,请重试！");
+				}, 
+				success: function(data) {
+					alert("配置文件发送完成,设备正在重启,重启过程约15秒钟...");
+				   location.reload(true);
+				}
+			};
+
+			if(typeof FormData != "function"){
+				 $("#progressbar").hide();
+			}else{
+				$("#progressbar").show();
+			}
+
+			
+			ajaxUpload(options);
+		})
+
+}
+		
+
+	$(document).ready(function(e) {
+
+		menuClick(1);
+		//初始化上传
+		initUpload();
+		$('.lcs_check').lc_switch();
+		// triggered each time a field changes status
+		$('body').delegate('.lcs_check', 'lcs-statuschange', function() {
+			var status = ($(this).is(':checked')) ? 'checked' : 'unchecked';
+			//console.log('field changed status: '+ status );
+		});
+		$(function(){
+			$("#container").css('minHeight',window.screen.availHeight-180);
+			// $("#container").height(window.screen.availHeight-132);
+			$('.menu').height(window.screen.availHeight-30);
+		})
+
+	  //add by chenqq
+		$("#var_ext_devtype").on("click", function(){
+			var value = $("#var_ext_devdrive_hiddeninput").val();
+			if(value){
+				showDialog('data_dialog');
+				$("#var_ext_devdrive_hiddeninput").val('')
+			}else{
+				$("#var_ext_devdrive_hiddeninput").val($(this).val())
+			}
+			
+			var p_type = $(this).val().split("|");
+			if( p_type != null && p_type.length == 3 ) {
+				setValue('var_ext_pro_dev',p_type[0]+"|"+p_type[1]);
+				setValue('var_ext_pro_type',p_type[2]);
+				refreshOneProtoDevList(false,'var_ext_pro_dev','var_ext_pro_type');
+				setCheckBoxEnable('var_ext_dev_rtu_self', PROTO_DEV_RTU_SELF == Number(p_type[0]));
+				ext_onchange_proto(true);
+				ext_oncheck_self_dev();
+				if(getChecked('var_ext_dev_rtu_self')) {
+					setValue('var_ext_dev_rtu_self_list', p_type[1]);
+				}
+			}
+		})
+
+		
+	});
+</script> 
+<script>
+	addVarExtInfo();
+	
+	$('#txtWebSocketAddress').val(window.location.hostname);
+
+	///Websocket 实例
+	var websocket=null;
+	//如果离线了是否自动连接
+	var autoConnectionIfClose=false;
+	//  自动连接 时间
+	var autoConnectionTimeOut=2000;
+	///是否记录接收到的消息 
+	var recordReviceMessage=true;
+	var lastisrcv = false;
+	var lastisend = false;
+	var lastisrcvhex = false;
+	var lastissendhex = false;
+	var lastmsgdate = new Date();
+
+	$("#txtMonitorParameter").on("change",function(){
+		var ws_port_type = getNumber('txtMonitorParameter');
+		if( ws_port_type == 5 ) {
+			$('#lblMonitorNetPort').css('visibility',"visible");
+			$('#txtMonitorNetPort').css('visibility',"visible");
+		} else {
+			$('#lblMonitorNetPort').css('visibility',"hidden");
+			$('#txtMonitorNetPort').css('visibility',"hidden");
+		}
+	});
+	
+	function messageNodeAdd(_str) {
+		var txtMessage = $("#txtMessage");
+		var _sstr = txtMessage.val()+_str;
+		if( _sstr.length > 60*1024 ) {
+			_sstr = _sstr.substring(_sstr.length - 60*1024, _sstr.length);
+		}
+		txtMessage.val(_sstr);
+	}
+	
+	function setWebsocketCfg() {
+
+		var ws_port_type = getValue('txtMonitorParameter');
+		var ws_net_port = getNumber('txtMonitorNetPort');
+		
+		if (chk(getValue('txtWebSocketAddress'), "服务器地址")) return;
+		if (chk(ws_port_type, "监听接口")) return;
+		if( ws_port_type == 5 ) {
+			if (chk(ws_net_port, "以太网监听端口")) return;
+		}
+
+		//注：在此处填写保存代码即可；
+		var setval = {
+			en:1, 
+			pt:Number(ws_port_type), 
+			lsnpt:ws_net_port
+		};	
+		
+		MyGetJSONWithArg("正在设置参数并建立连接","/action/setWebsocketCfg?",JSON.stringify(setval), function (info)
+		{
+			if( info.ret == 0 ) {
+				StartWebSocket();
+			} else {
+				alert("监听接口设置失败!");
+			}
+		});
+	}
+	
+	function isWsConnected() {
+		return ( websocket != null && websocket.readyState == 1 );
+	}
+	
+	function CloseWebsocket() {
+		if( isWsConnected() ) {
+			websocket.close();
+			websocket = null;
+		}
+		
+		$('#btnDisconnectWebSocket').attr('disabled',"true");
+		$('#btnConnectWebSocket').removeAttr("disabled");
+		$('#btnConnectWebSocket').css('display','inline-block');
+		$('#btnDisconnectWebSocket').css('display','none');
+		setEnable('txtMonitorParameter', true );
+	}
+	
+	function StartWebSocket() {
+			window.WebSocket  = window.WebSocket || window.MozWebSocket;
+			if (!window.WebSocket ) {
+				alert('浏览器不支持WebSocket')
+				return;
+			}
+			CloseWebsocket();
+			websocket = new WebSocket('ws://'+$("#txtWebSocketAddress").val());
+			websocket.binaryType = "arraybuffer";
+		   //连接成功后
+			websocket.onopen = function (evt) {
+				$('#btnConnectWebSocket').attr('disabled',"true");
+				$('#btnDisconnectWebSocket').removeAttr("disabled");
+				$('#btnConnectWebSocket').css('display','none');
+				$('#btnDisconnectWebSocket').css('display','inline-block');
+				setEnable('txtMonitorParameter', false );
+				websocket.send("");
+				alert('连接成功');
+			};
+			//end 连接成功后
+			 //连接断线了
+			websocket.onclose = function (evt) {
+				CloseWebsocket();
+			  if (autoConnectionIfClose==true)
+			  {
+				  setTimeout(function(){
+					StartWebSocket();
+				  },autoConnectionTimeOut);
+			  } else
+					{
+					  alert('断线了！，请重新连接');
+					}
+			};
+			 //end 连接断线了
+			//收到消息
+			websocket.onmessage = function (evt) {
+			  if (recordReviceMessage==true)
+			  {
+				var isHexShow=$("#btnIsHexShow").prop('checked');
+				var nowTime = new Date().toLocaleTimeString();
+				var textNode = "";
+				
+				if( new Date().getTime() - lastmsgdate.getTime() > 1000 ) {
+					lastisrcvhex = false;
+					lastissendhex = false;
+					lastisrcv = false;
+					lastisend = false;
+				}
+				
+				if( evt.data instanceof ArrayBuffer ) {
+					var ary = new Uint8Array(evt.data);
+					var isrcv = ((ary[0]&0x01)!=0);
+					if( isrcv ) {
+						if( lastisrcv ) {
+							if( isHexShow ) {
+								textNode = (lastisrcvhex?' ':'')+uint8ArrayToHexString(ary,1);
+							} else {
+								textNode = uint8ArrayToString(ary,1);
+							}
+						} else {
+							if( isHexShow ) {
+								textNode = '\n'+nowTime+' 收到：'+uint8ArrayToHexString(ary,1);
+							} else {
+								textNode = '\n'+nowTime+' 收到：'+uint8ArrayToString(ary,1);
+							}
+						}
+						lastisrcvhex = true;
+						lastissendhex = false;
+						lastisrcv = true;
+						lastisend = false;
+					} else {
+						if( lastisend ) {
+							if( isHexShow ) {
+								textNode = (lastissendhex?' ':'')+uint8ArrayToHexString(ary,1);
+							} else {
+								textNode = uint8ArrayToString(ary,1);
+							}
+						} else {
+							if( isHexShow ) {
+								textNode = '\n'+nowTime+' 发送：'+uint8ArrayToHexString(ary,1);
+							} else {
+								textNode = '\n'+nowTime+' 发送：'+uint8ArrayToString(ary,1);
+							}
+						}
+						lastissendhex = true;
+						lastisrcvhex = false;
+						lastisend = true;
+						lastisrcv = false;
+					}
+				}
+
+				messageNodeAdd(textNode);
+				var obj = document.getElementById("txtMessage");
+				obj.scrollTop = obj.scrollHeight;
+				lastmsgdate = new Date();
+			  }
+			};
+		   //end 收到消息
+		  //错误发生了
+			websocket.onerror = function (evt) {
+				CloseWebsocket();
+			};
+			//end 错误发生了
+		}
+	//end Start Web Socket
+	//连接处理
+
+	$("#btnConnectWebSocket").on("click",function(){
+		setWebsocketCfg();
+		return false;
+	});
+	//end 开始记录
+	//停下记录
+	$("#btnDisconnectWebSocket").on("click",function(){
+		CloseWebsocket();
+		return false;
+	});
+	
+	
+	/*$("#btnConnectWebSocket").on("click",function(){
+		setWebsocketCfg();
+		return false;
+	});
+	
+	$("#btnDisconnectWebSocket").on("click",function(){
+		CloseWebsocket();
+		return false;
+	});*/
+	//end 连接处理
+
+	//发送设置参数 
+	function SendSetOrder()
+	{
+	
+	var monitorParameter=$("#txtMonitorParameter").val();
+
+	var isHexShow=$("#btnIsHexShow").prop('checked');
+
+	var isSaveToFile=$("#btnIsSaveToFile").prop('checked');
+
+	if (websocket==null)
+		{
+		alert('请先连接服务器')
+		return;
+		} else
+		{
+		// 待处理  发送设置参数
+		//end 待处理  发送设置参数
+		}
+	}
+	//end  发送设置参数
+	//开始记录
+	$("#btnStartRecord").on("click",function(){
+		$('#btnStartRecord').attr('disabled',"true");
+		$('#btnStopRecord').removeAttr("disabled");
+		$('#btnStartRecord').css('display','none');
+		$('#btnStopRecord').css('display','inline-block');
+		recordReviceMessage=true;
+		SendSetOrder();
+		
+	});
+	//end 开始记录
+	//停下记录
+	$("#btnStopRecord").on("click",function(){
+		$('#btnStopRecord').attr('disabled',"true");
+		$('#btnStartRecord').removeAttr("disabled");
+		$('#btnStartRecord').css('display','inline-block');
+		$('#btnStopRecord').css('display','none');
+		recordReviceMessage=false;
+		
+	});
+	//end 停下记录
+	$('#btnStartRecord').attr('disabled',"true");
+	//清屏
+	$("#btnClearScreen").on("click",function(){
+		var  txtMessage = $("#txtMessage").val('');
+		var obj = document.getElementById("txtMessage");
+		obj.scrollTop = obj.scrollHeight;
+	});
+	//end 清屏
+	//循环发送
+	var loopSendTimer =null;
+	///多久发一次 缺省的
+	var loopSendTimeOutDefault =5000;
+	$("#btnLoopSend").on("click",function(){
+		if ($("#btnLoopSend").prop('checked'))
+		{
+		if (websocket==null)
+		{
+		alert('请先连接服务器')
+		return;
+		}
+		var LoopSendTimeOut=  parseInt($("#txtLoopSendTimeOut").val())||loopSendTimeOutDefault;
+		//设置发送定时器
+		loopSendTimer=  setInterval(function(){
+				ws_sendmsg();
+			},LoopSendTimeOut);
+		} else
+		{
+			//清空发送定时器
+			clearInterval(loopSendTimer);
+		}
+	});
+	//end 循环发送
+	
+	function ws_sendmsg()
+	{
+		if (!isWsConnected()) return false;
+		var sendMessage=$("#txtsendMessage").val();
+		var isHexShowSend=$("#btnIsHexShowSend").prop('checked');
+		switch(getNumber('txtMonitorParameter')) {
+		case 0: case 1:case 2:case 3:case 4:case 5:
+		{
+			var nowTime = new Date().toLocaleTimeString();  
+			var textNode = '\n'+nowTime+' 发送：'+sendMessage;
+			lastisend = true;
+			lastisrcv = false;
+			messageNodeAdd(textNode);
+			var obj = document.getElementById("txtMessage");
+			obj.scrollTop = obj.scrollHeight;
+			lastmsgdate = new Date();
+			break;
+		}
+		default:{}
+		}
+		var data = null;
+		if( isHexShowSend ) {
+			data = stringArrayToUint8Array(sendMessage);
+		} else {
+			data = stringToUint8Array(sendMessage);
+		}
+		if( data != null && data.length>0 ) {
+			websocket.send(data);
+			return true;
+		}
+		return false;
+	}
+	
+	//发送处理
+	$("#btnSendOrder").on("click",function(){
+		if (websocket==null)
+		{
+			alert('请先连接服务器')
+			return;
+		}
+		ws_sendmsg();
+	});
+	//end 发送处理
+</script>
+</html>

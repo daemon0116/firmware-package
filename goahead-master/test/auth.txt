@@ -1,0 +1,9 @@
+#
+#   auth.txt - Authorization data
+#
+
+role name=person abilities=breathe
+role name=user abilities=view,person
+role name=administrator abilities=user,manage
+
+user name=stzn password=8678f610fb96bb77c8d255c415849b10 roles=administrator,purchase

@@ -1,0 +1,82 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>接口控制台</title>
+<meta name="keywords" content="关键词，关键词"/>
+<meta name="description" content=""/>
+<link href="css/style.css" rel="stylesheet"/>
+<script src="js/jquip.min.js"></script>
+</head>
+<body>
+	<div class="logo_01">
+			<img src="images/logo2.png">
+	</div>
+	<div class="logo_02">
+		uboot控制台
+	</div>
+	<div id="Logo">
+		<form class="form" name="form1" method="post" action="/action/login" onsubmit="return loginBtn_click();">
+			<div class="form_box">
+				<p><img src="images/1.png"/><input  type="text" name="username" id="username" placeholder="用户名"></p>
+				<p><img src="images/2.png"/><input  type="password" name="password" id="password" placeholder="密码"></p>
+				<p class="che"><input id="checkbox1" type="checkbox" value="记住密码">&nbsp;&nbsp;记住密码</p>
+			</div>
+			<div class="form_submit">
+				<a><input type="submit" id="submit" name="submit" value="登录"></a>
+			</div>
+		</form>
+		<div class="footbox">Copyright © 2016 舜通智能 All rights reserved.</div>
+	</div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        var strName = localStorage.getItem('keyName');
+        var strPass = localStorage.getItem('keyPass');
+        if(strName){
+            $('#username').val(strName);
+        }if(strPass){
+            $('#password').val(strPass);
+        }
+
+    });
+
+    function loginBtn_click(){
+            var strName = $('#username').val();
+            var strPass = $('#password').val();
+            localStorage.setItem('keyName',strName);
+            if($('#checkbox1').is(':checked')){
+                localStorage.setItem('keyPass',strPass);
+            }else{
+                localStorage.removeItem('keyPass');
+            }
+        }
+</script>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

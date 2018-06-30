@@ -1,0 +1,13 @@
+---- example.com Matches (12 in 8 files) ----
+authentication.html (doc\contents\users) line 251 :             file when GoAhead was built. It defaults to: "example.com". You may set this to any string you like. 
+authentication.html (doc\dist\users) line 396 :             file when GoAhead was built. It defaults to: "example.com". You may set this to any string you like. 
+gopass.html (doc\contents\man) line 22 :             gopass --file auth.conf --password pass1 example.com joshua admin-
+gopass.html (doc\contents\man) line 28 :             gopass --password pass1 example.com joshua administrator buyer
+gopass.html (doc\dist\man) line 22 :             gopass --file auth.conf --password pass1 example.com joshua admin-
+gopass.html (doc\dist\man) line 28 :             gopass --password pass1 example.com joshua administrator buyer
+gopass.txt (doc\contents\man) line 19 :             gopass --file auth.conf --password pass1 example.com joshua admin-
+gopass.txt (doc\contents\man) line 25 :             gopass --password pass1 example.com joshua administrator buyer
+gopass.txt (doc\dist\man) line 19 :             gopass --file auth.conf --password pass1 example.com joshua admin-
+gopass.txt (doc\dist\man) line 25 :             gopass --password pass1 example.com joshua administrator buyer
+me.h (build\linux-arm-static\inc) line 187 :     #define ME_GOAHEAD_REALM "example.com"
+me.h (build\linux-x64-static\inc) line 187 :     #define ME_GOAHEAD_REALM "example.com"
